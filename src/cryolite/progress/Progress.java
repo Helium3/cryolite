@@ -14,6 +14,8 @@ public abstract class Progress extends Stoppable {
 
 		new Thread(this).start();
 	}
+	
+	public int getDelay() { return delay; }
 
 	/**
 	 * Set a progress
