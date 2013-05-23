@@ -32,7 +32,7 @@ public class ProgressOutputStream extends FilterOutputStream {
 	}
 
 	public void write(byte b[], int off, int len) throws IOException {
-		// out.write(b, off, len);
+		 out.write(b, off, len);
 		ioProgress.setProgress(len);
 	}
 
