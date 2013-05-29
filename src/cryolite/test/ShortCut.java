@@ -56,9 +56,20 @@ public class ShortCut {
 		iop.setProgress(1);
 		iop.close();
 		iop.setProgress(1);
-		Thread.sleep(10000);
+		Thread.sleep(9000);
 		iop.setProgress(1);
 		iop.close();
+		
+		CounterProgress cp = cp("same");
+		cp = cp("same");
+		cp.setProgress(1);
+		Thread.sleep(10000);
+		cp.setProgress(1);
+		cp.close();
+		cp.setProgress(1);
+		Thread.sleep(9000);
+		cp.setProgress(1);
+		cp.close();
 		
 		TimeLog tl = tl();
 		tl.tic();

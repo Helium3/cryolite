@@ -33,7 +33,8 @@ public class CounterProgress extends Progress {
 	/**
 	 * The accumulated number of the Progress
 	 */
-	public String format(long now) {
+	public String format() {
+		long now = System.currentTimeMillis();
 		return String.format("%s: Total %d processed, avg: %d/s", name,
 				sum.get(), 1000 * sum.get() / (now - start + 1));
 	}

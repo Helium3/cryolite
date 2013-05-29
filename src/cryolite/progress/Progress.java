@@ -9,7 +9,7 @@ public abstract class Progress {
 
 	protected String name;
 	private int delay;
-	private int factor;
+	private int factor = 1;
 	protected long start, last;
 	protected Log LOG = LogFactory.getLog(this.getClass());
 	private volatile boolean stop = false;
@@ -23,7 +23,7 @@ public abstract class Progress {
 		Monitor._.addEvent(this);
 	}
 	
-	public int getDelay() { return delay; }
+	public int getDelay() { return delay*factor; }
 
 	/**
 	 * Set a progress
@@ -70,14 +70,16 @@ public abstract class Progress {
 		} else {
 			speedUp();
 		}
-		long now = System.currentTimeMillis();
-		LOG.info(format(now));
+		LOG.info(format());
 		acc.set(0);
-		last = now;
+		last = System.currentTimeMillis();
 	}
 
-	protected abstract String format(long now);
+	protected abstract String format();
 	
+	/**
+	 * No output except the one in sub-class close will show up
+	 */
 	public void close() {
 		Monitor._.eventDone(this);
 		synchronized (this) {

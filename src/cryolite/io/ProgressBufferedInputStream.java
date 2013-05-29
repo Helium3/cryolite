@@ -25,8 +25,7 @@ public class ProgressBufferedInputStream extends BufferedInputStream {
 		super(new ProgressInputStream(in, groupName));
 	}
 
-	public ProgressBufferedInputStream(InputStream in, String groupName,
-			int size) {
+	public ProgressBufferedInputStream(InputStream in, int size, String groupName) {
 		super(new ProgressInputStream(in, groupName), size);
 	}
 }

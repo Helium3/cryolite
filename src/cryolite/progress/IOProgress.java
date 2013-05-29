@@ -65,7 +65,8 @@ public class IOProgress extends Progress {
 	/**
 	 * format the progress
 	 */
-	protected String format(long now) {
+	protected String format() {
+		long now = System.currentTimeMillis();
 		return String.format("%s:\t%3.2fMB/s, avg. %3.2fMB/s", name,
 				transform(acc.get(), now - last + 1),
 				transform(sum.get(), now - start + 1));

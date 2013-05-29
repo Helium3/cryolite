@@ -19,8 +19,7 @@ public class ProgressBufferedOutputStream extends BufferedOutputStream {
 		super(new ProgressOutputStream(out, groupName));
 	}
 	
-	public ProgressBufferedOutputStream(OutputStream out, String groupName,
-			int size) {
+	public ProgressBufferedOutputStream(OutputStream out, int size, String groupName) {
 		super(new ProgressOutputStream(out, groupName), size);
 	}
 }
