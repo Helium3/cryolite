@@ -1,4 +1,4 @@
-package cryolite.core;
+package cryolite.util;
 
 public class Utils {
 

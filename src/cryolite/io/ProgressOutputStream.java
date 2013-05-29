@@ -42,6 +42,6 @@ public class ProgressOutputStream extends FilterOutputStream {
 	 */
 	public void close() throws IOException {
 		super.close();
-		ioProgress.cancel();
+		ioProgress.close();
 	}
 }

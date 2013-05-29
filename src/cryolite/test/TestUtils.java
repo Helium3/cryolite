@@ -2,7 +2,7 @@ package cryolite.test;
 
 import org.junit.Test;
 
-import cryolite.core.Utils;
+import cryolite.util.Utils;
 
 public class TestUtils extends TestCommon {
 	
@@ -27,7 +27,7 @@ public class TestUtils extends TestCommon {
 			}
 			iop.setProgress(4*LOOPSIZE);
 		}
-		iop.cancel();		
+		iop.close();		
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class TestUtils extends TestCommon {
 			}
 			iop.setProgress(4*LOOPSIZE);
 		}
-		iop.cancel();		
+		iop.close();		
 	}
 
 	@Test

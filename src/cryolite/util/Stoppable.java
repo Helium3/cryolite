@@ -1,4 +1,4 @@
-package cryolite.core;
+package cryolite.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,9 +22,6 @@ public abstract class Stoppable implements Runnable {
 	 */
 	public void cancel() {
       stop = true;
-	  synchronized(this) {
-		this.notify();
-	  }
 	}
 
 	public void run() {
