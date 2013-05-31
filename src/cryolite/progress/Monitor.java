@@ -15,34 +15,27 @@ public class Monitor implements Runnable {
 		while(true) {
 			// get a event
 			Event e;
+			long now, due;
+			Progress p;
 			synchronized(events) {
 				if(events.isEmpty()) return;
 				e = events.peek();
+				now = System.currentTimeMillis();
+				due = e.getTime();
+				p = e.getProgress();
 			}
-			long now = System.currentTimeMillis();
-			long due = e.getTime();
-			Progress p = e.getProgress();
 			if(due > now) {
 				// wait a certain time
-				synchronized(p) {
-					try {
-						p.wait(due-now);
-					} catch (InterruptedException ie) { }
-				}
-			}
-			if(System.currentTimeMillis() < due) {
-				// we are notify by eventDone
-				// no output this time
-				continue;
+				p.waitDelay(due-now);
 			}
 			
 			// re enqueue this event
 			synchronized(events) {
 				// double check events is still there
 				// if not, we ignore output
-				if(!events.peek().equals(e)) continue;
+				if(events.isEmpty() || !events.peek().equals(e)) continue;
 				// output a event
-				p.output();
+				p.progress();
 				e.setTime(p.getDelay()+due);
 				events.add(events.poll());
 			}
@@ -51,19 +44,23 @@ public class Monitor implements Runnable {
 	
 	public void addEvent(Progress p) {
 		synchronized(events) {
-			if(events.isEmpty()) new Thread(this).start();
-			
-			events.offer(new Event(p, p.getDelay()+System.currentTimeMillis()));
+			if(events.isEmpty()) {
+				events.offer(new Event(p, p.getDelay()+System.currentTimeMillis()));
+				new Thread(this).start();
+			} else {
+				events.offer(new Event(p, p.getDelay()+System.currentTimeMillis()));
+			}
 		}
 	}
 	
 	public void eventDone(Progress p) {
 		synchronized(events) {
-			events.remove(p);
-		}
-
-		synchronized(p) {
-			p.notify();			
+			for(Event e : events) {
+				if(e.getProgress() == p) {
+					events.remove(e);
+					return;
+				}
+			}
 		}
 	}
 

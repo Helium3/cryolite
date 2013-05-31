@@ -1,21 +1,29 @@
 package cryolite.progress;
 
-import cryolite.core.Stoppable;
+import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class Progress extends Stoppable {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public abstract class Progress {
 
 	protected String name;
 	private int delay;
-	protected long start, last, now;
+	private int factor = 1;
+	protected long start, last;
+	protected Log LOG = LogFactory.getLog(this.getClass());
+	private volatile boolean stop = false;
+
+	protected AtomicLong acc = new AtomicLong(0), sum = new AtomicLong(0);
 
 	protected Progress(String name, int delay) {
 		this.name = name;
 		this.delay = delay;
-
-		new Thread(this).start();
+		this.last = this.start = System.currentTimeMillis();
+		Monitor._.addEvent(this);
 	}
 	
-	public int getDelay() { return delay; }
+	public int getDelay() { return delay*factor; }
 
 	/**
 	 * Set a progress
@@ -23,53 +31,60 @@ public abstract class Progress extends Stoppable {
 	 * @param progress
 	 *            the progress to be accumulated
 	 */
-	public abstract void setProgress(long progress);
+	public void setProgress(long progress) {
+		this.sum.getAndAdd(progress);
+		this.acc.getAndAdd(progress);
+	}
 
-	// wait a certain delay before output progress
-	private void waitDelay() {
+	/**
+	 * wait a certain delay before output progress
+	 * @param delay
+	 */
+	protected void waitDelay(long delay) {
 		try {
 			synchronized (this) {
+				if(stop) return;
 				wait(delay);
 			}
 		} catch (InterruptedException e) {
 			LOG.debug("Interrupted");
-			stop = true;
 		}
 	}
-
-	protected void setup() {
-		last = start = now = System.currentTimeMillis();
+	
+	protected void slowDown() {
+		if(factor < 300000)
+			factor <<= 1;
 	}
 
-	/**
-	 * 3 steps: 1- wait a certain delay 2- determine whether to stop 3- output
-	 * progress
-	 */
-	protected void runTask() {
-		waitDelay();
-
-		if (kill()) {
-			stop = true;
-			return;
-		}
-
-		now = System.currentTimeMillis();
-		output();
-		last = now;
+	protected void speedUp() {
+		factor >>>= 1;
+		if(factor == 0) factor = 1;
 	}
 
 	/**
 	 * Sub-class should specify how to output the progress
 	 */
-	protected abstract void output();
+	public void progress() {
+		if(acc.get() == 0) {
+			slowDown();
+		} else {
+			speedUp();
+		}
+		LOG.info(format());
+		acc.set(0);
+		last = System.currentTimeMillis();
+	}
 
+	protected abstract String format();
+	
 	/**
-	 * The default behavior will cause Progress never stops until the user
-	 * cancel it
-	 * 
-	 * @return whether the Progress are done
+	 * No output except the one in sub-class close will show up
 	 */
-	protected boolean kill() {
-		return false;
+	public void close() {
+		Monitor._.eventDone(this);
+		synchronized (this) {
+			notifyAll();
+			stop = true;
+		}
 	}
 }

@@ -4,8 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import cryolite.core.TimeLog;
 import cryolite.progress.*;
+import cryolite.util.TimeLog;
 
 /**
  * Convient class for writing test
@@ -42,19 +42,41 @@ public class ShortCut {
 	}
 	
 	@Test
-	public void testAll() {
-		cp().cancel();
-		cp("abc").cancel();
+	public void testAll() throws InterruptedException {
+		cp().close();
+		cp("abc").close();
 		
-		iop().cancel();
-		iop("abc").cancel();
+		iop().close();
+		iop("abc").close();
+		
+		IOProgress iop = iop("same");
+		iop = iop("same");
+		iop.setProgress(1);
+		Thread.sleep(10000);
+		iop.setProgress(1);
+		iop.close();
+		iop.setProgress(1);
+		Thread.sleep(9000);
+		iop.setProgress(1);
+		iop.close();
+		
+		CounterProgress cp = cp("same");
+		cp = cp("same");
+		cp.setProgress(1);
+		Thread.sleep(10000);
+		cp.setProgress(1);
+		cp.close();
+		cp.setProgress(1);
+		Thread.sleep(9000);
+		cp.setProgress(1);
+		cp.close();
 		
 		TimeLog tl = tl();
 		tl.tic();
 		tl.tac();
 	}
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws InterruptedException {
 		new ShortCut().testAll();
 	}
 }

@@ -1,4 +1,4 @@
-package cryolite.core;
+package cryolite.util;
 
 import java.util.Stack;
 

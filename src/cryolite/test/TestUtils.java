@@ -2,7 +2,9 @@ package cryolite.test;
 
 import org.junit.Test;
 
-import cryolite.core.Utils;
+import cryolite.util.Utils;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class TestUtils extends TestCommon {
 	
@@ -23,11 +25,11 @@ public class TestUtils extends TestCommon {
 		iop = s.iop("writeInt with offset");
 		for(int i = 0; i < LOOP; i++) {
 			for(int j = 0; j < LOOPSIZE; j++) {
-				Utils.writeInt(b, offset, c++);
+				Utils.writeInt(b, c++, offset);
 			}
 			iop.setProgress(4*LOOPSIZE);
 		}
-		iop.cancel();		
+		iop.close();		
 	}
 
 	/**
@@ -44,17 +46,17 @@ public class TestUtils extends TestCommon {
 			}
 			iop.setProgress(4*LOOPSIZE);
 		}
-		iop.cancel();		
+		iop.close();		
 	}
 
 	@Test
 	public void testFunctional() {
 		int[] arr = new int[] {-1, Integer.MAX_VALUE, Integer.MIN_VALUE, 0, 99, -99};
 		
-		byte[] buf = new byte[4];
+		byte[] buf = new byte[5];
 		for(int i = 0; i < arr.length; i++) {
-			Utils.writeInt(buf, 0, arr[i]);
-			assert Utils.readInt(buf, 0) == arr[i];
+			Utils.writeInt(buf, arr[i], 1);
+			assertThat(Utils.readInt(buf, 1), is(arr[i]));
 		}
 		
 	}

@@ -1,29 +1,31 @@
 package cryolite.progress;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Map;
 
 public class IOProgress extends Progress {
 
-	private static HashMap<String, IOProgress> ioProgressMap = new HashMap<String, IOProgress>();
+	private static Map<String, IOProgress> ioProgressMap = new HashMap<String, IOProgress>();
 
+	private int refCount = 1;
+	
 	/**
 	 * Factory to get an IOProgress
 	 * 
 	 * @param groupName
 	 * @return
 	 */
-	public static IOProgress getInstance(String groupName) {
+	public static synchronized IOProgress getInstance(String groupName) {
 		IOProgress p = ioProgressMap.get(groupName);
-		if (p == null || (p != null && p.stop)) {
+		if (p == null) {
 			p = new IOProgress(groupName);
 			ioProgressMap.put(groupName, p);
+		} else {
+			p.refCount++;
 		}
 		return p;
 	}
-
-	private AtomicLong acc = new AtomicLong(0), sum = new AtomicLong(0);
-
+	
 	/**
 	 * Initial a I/O progress monitor with default delay 5s
 	 * 
@@ -46,18 +48,14 @@ public class IOProgress extends Progress {
 		super(name, delay);
 	}
 
-	/**
-	 * Set an incremental progress
-	 * 
-	 * @param acc
-	 *            The bytes being read or written
-	 */
-	public synchronized void setProgress(long progress) {
-		this.sum.getAndAdd(progress);
-		this.acc.getAndAdd(progress);
-	}
-
-	protected void cleanup() {
+	public synchronized void close() {		
+		if(--refCount != 0) {
+			return;
+		}
+		
+		ioProgressMap.remove(name);
+		super.close();
+		long now = System.currentTimeMillis();
 		LOG.info(String.format(
 				"%s:\tavg. %3.2fMB/s with total bytes %d in %d ms", name,
 				transform(sum.get(), now - start + 1), sum.get(), (now - start)));
@@ -65,13 +63,13 @@ public class IOProgress extends Progress {
 
 	@Override
 	/**
-	 * Output the progress
+	 * format the progress
 	 */
-	protected void output() {
-		LOG.info(String.format("%s:\t%3.2fMB/s, avg. %3.2fMB/s", name,
+	protected String format() {
+		long now = System.currentTimeMillis();
+		return String.format("%s:\t%3.2fMB/s, avg. %3.2fMB/s", name,
 				transform(acc.get(), now - last + 1),
-				transform(sum.get(), now - start + 1)));
-		acc.set(0);
+				transform(sum.get(), now - start + 1));
 	}
 
 	// change byte & time to MB/s

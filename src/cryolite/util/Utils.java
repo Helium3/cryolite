@@ -1,4 +1,4 @@
-package cryolite.core;
+package cryolite.util;
 
 public class Utils {
 
@@ -10,7 +10,7 @@ public class Utils {
 			(b[offset + 3] & 0xff) <<  0;
 	}
 	
-	public static void writeInt(byte[] b, int offset, int c) {
+	public static void writeInt(byte[] b, int c, int offset) {
 		b[offset + 0] = (byte) (c >>> 24);
 		b[offset + 1] = (byte) (c >>> 16);
 		b[offset + 2] = (byte) (c >>>  8);

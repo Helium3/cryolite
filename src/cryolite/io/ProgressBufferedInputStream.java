@@ -14,10 +14,12 @@ import cryolite.progress.IOProgress;
  * 
  */
 public class ProgressBufferedInputStream extends BufferedInputStream {
-
-	// percentage of data set has been processed
+	
+	/**
+	 * we can't touch the InputStream as we are FilterInputStream
+	 */
 	protected IOProgress ioProgress;
-
+	
 	/**
 	 * InputStream that keep a progress monitor Print progress every 5 seconds
 	 * 
@@ -32,8 +34,7 @@ public class ProgressBufferedInputStream extends BufferedInputStream {
 		ioProgress = IOProgress.getInstance(groupName);
 	}
 
-	public ProgressBufferedInputStream(InputStream in, String groupName,
-			int size) {
+	public ProgressBufferedInputStream(InputStream in, int size, String groupName) {
 		super(in, size);
 		ioProgress = IOProgress.getInstance(groupName);
 	}
@@ -58,6 +59,6 @@ public class ProgressBufferedInputStream extends BufferedInputStream {
 	 */
 	public void close() throws IOException {
 		super.close();
-		ioProgress.cancel();
+		ioProgress.close();
 	}
 }
