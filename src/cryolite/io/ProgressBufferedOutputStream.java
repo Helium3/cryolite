@@ -7,11 +7,11 @@ import java.io.OutputStream;
 
 import cryolite.progress.IOProgress;
 
+/**
+ * we can't touch the InputStream as we are FilterInputStream
+ */
 public class ProgressBufferedOutputStream extends BufferedOutputStream {
 	
-	/**
-	 * we can't touch the InputStream as we are FilterInputStream
-	 */
 	protected IOProgress ioProgress;
 	
 	/**
