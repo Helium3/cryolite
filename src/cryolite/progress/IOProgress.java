@@ -2,12 +2,13 @@ package cryolite.progress;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IOProgress extends Progress {
 
 	private static Map<String, IOProgress> ioProgressMap = new HashMap<String, IOProgress>();
 
-	private int refCount = 1;
+	private AtomicInteger refCount = new AtomicInteger(1);
 	
 	/**
 	 * Factory to get an IOProgress
@@ -21,7 +22,7 @@ public class IOProgress extends Progress {
 			p = new IOProgress(groupName);
 			ioProgressMap.put(groupName, p);
 		} else {
-			p.refCount++;
+			p.refCount.incrementAndGet();
 		}
 		return p;
 	}
@@ -49,7 +50,7 @@ public class IOProgress extends Progress {
 	}
 
 	public synchronized void close() {		
-		if(--refCount != 0) {
+		if(refCount.decrementAndGet() != 0) {
 			return;
 		}
 		

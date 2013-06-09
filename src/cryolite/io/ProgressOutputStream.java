@@ -7,10 +7,18 @@ import java.io.OutputStream;
 
 import cryolite.progress.IOProgress;
 
+/**
+ * OutputStream with a 5 seconds progress output
+ * For small write use ProgressBufferedOutputStream instead
+ * @author jds
+ * 
+ */
 public class ProgressOutputStream extends FilterOutputStream {
 
 	// percentage of data set has been processed
-	protected IOProgress ioProgress;
+	private final byte[] oneByte = new byte[1];
+	
+  protected IOProgress ioProgress;
 
 	/**
 	 * OutputStream that keep a progress monitor Print progress every 5 seconds
@@ -26,12 +34,12 @@ public class ProgressOutputStream extends FilterOutputStream {
 		ioProgress = IOProgress.getInstance(groupName);
 	}
 
-	public void write(int c) throws IOException {
-		out.write(c);
-		ioProgress.setProgress(1);
+	public synchronized void write(int c) throws IOException {
+		oneByte[0] = (byte) c;
+		write(oneByte, 0, 1);
 	}
 
-	public void write(byte b[], int off, int len) throws IOException {
+	public synchronized void write(byte b[], int off, int len) throws IOException {
 		out.write(b, off, len);
 		ioProgress.setProgress(len);
 	}
@@ -40,7 +48,7 @@ public class ProgressOutputStream extends FilterOutputStream {
 	 * Forget to call the close method will NOT cause the monitor thread keep
 	 * running
 	 */
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		super.close();
 		ioProgress.close();
 	}
