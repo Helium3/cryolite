@@ -15,7 +15,7 @@ public class ProgressBufferedInputStream extends FilterInputStream {
    * The internal buffer array where the data is stored. When necessary, it may
    * be replaced by another array of a different size.
    */
-  protected volatile byte buf[];
+  protected byte buf[];
 
   /**
    * Atomic updater to provide compareAndSet for buf. This is necessary because
