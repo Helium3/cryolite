@@ -27,7 +27,7 @@ public class TestUtils extends TestCommon {
 			for(int j = 0; j < LOOPSIZE; j++) {
 				Utils.writeInt(b, c++, offset);
 			}
-			iop.setProgress(4*LOOPSIZE);
+			iop.setProgress(4L*LOOPSIZE);
 		}
 		iop.close();		
 	}
@@ -44,7 +44,7 @@ public class TestUtils extends TestCommon {
 			for(int j = 0; j < LOOPSIZE; j++) {
 				Utils.readInt(b, offset);
 			}
-			iop.setProgress(4*LOOPSIZE);
+			iop.setProgress(4L*LOOPSIZE);
 		}
 		iop.close();		
 	}
