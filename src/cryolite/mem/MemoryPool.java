@@ -47,7 +47,7 @@ public class MemoryPool {
         lock.lockInterruptibly();
 		try {
 			if (assigned == capacity) {
-				notEmpty.await();				
+				notEmpty.await();
 			}
 			
 			// no page is in the pool
@@ -92,4 +92,14 @@ public class MemoryPool {
 			lock.unlock();
 		}
 	}
+
+  public float usedPercantage() {
+    final ReentrantLock lock = this.lock;
+    lock.lock();
+    try {
+      return 1.0f * assigned / capacity;
+    } finally {
+      lock.unlock();
+    }
+  }
 }

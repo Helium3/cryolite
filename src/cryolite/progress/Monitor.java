@@ -46,7 +46,9 @@ public class Monitor implements Runnable {
 		synchronized(events) {
 			if(events.isEmpty()) {
 				events.offer(new Event(p, p.getDelay()+System.currentTimeMillis()));
-				new Thread(this, "Monitor").start();
+				Thread t = new Thread(this, "Monitor");
+				t.setDaemon(true);
+				t.start();
 			} else {
 				events.offer(new Event(p, p.getDelay()+System.currentTimeMillis()));
 			}
