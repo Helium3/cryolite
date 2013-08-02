@@ -4,10 +4,10 @@ public class Utils {
 
 	public static int readInt(byte[] b, int offset) {
 		return 
-			(b[offset + 0] & 0xff) << 24 |
-			(b[offset + 1] & 0xff) << 16 |
-			(b[offset + 2] & 0xff) <<  8 |
-			(b[offset + 3] & 0xff) <<  0;
+			((b[offset++] & 0xff) << 24) +
+			((b[offset++] & 0xff) << 16) +
+			((b[offset++] & 0xff) <<  8) +
+			((b[offset++] & 0xff) <<  0) ;
 	}
 
 	public static int readInt(byte[] b) {
@@ -32,6 +32,15 @@ public class Utils {
     b[offset + 3] = (byte) (c >>>  0);
   }
   
+  public static void writeInts(byte[] b, int offset, int ... ints) {
+    for (int c : ints) {
+      b[offset++] = (byte) (c >>> 24);
+      b[offset++] = (byte) (c >>> 16);
+      b[offset++] = (byte) (c >>>  8);
+      b[offset++] = (byte) (c >>>  0);
+    }
+  }
+  
   public static void writeLong(byte[] b, long c) {
     b[0] = (byte) (c >>> 56);
     b[1] = (byte) (c >>> 48);
@@ -54,8 +63,8 @@ public class Utils {
     b[offset + 7] = (byte) (c >>>  0);
   }
   
-  public static void writeLongs(byte[] b, int offset, long ... l) {
-    for (long c : l) {
+  public static void writeLongs(byte[] b, int offset, long ... longs) {
+    for (long c : longs) {
       b[offset++] = (byte) (c >>> 56);
       b[offset++] = (byte) (c >>> 48);
       b[offset++] = (byte) (c >>> 40);
