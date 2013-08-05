@@ -18,16 +18,16 @@ public class Utils {
 			(b[3] & 0xff) <<  0;
 	}
 
-	public static int readLong(byte[] b) {
-		return 
-			(b[0] & 0xff) << 56 |
-			(b[1] & 0xff) << 48 |
-			(b[2] & 0xff) << 40 |
-			(b[3] & 0xff) << 32 |
-			(b[4] & 0xff) << 24 |
-			(b[5] & 0xff) << 16 |
-			(b[6] & 0xff) <<  8 |
-			(b[7] & 0xff) <<  0;
+	public static long readLong(byte[] b) {
+		int high = readInt(b);
+		int low = readInt(b, 4);
+		return (((long) high) << 32) | low;
+	}
+
+	public static long readLong(byte[] b, int offset) {
+		int high = readInt(b, offset);
+		int low = readInt(b, offset + 4);
+		return (((long) high) << 32) | low;
 	}
   
 	public static void writeInt(byte[] b, int c) {
