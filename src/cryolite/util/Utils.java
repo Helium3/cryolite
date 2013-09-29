@@ -3,19 +3,13 @@ package cryolite.util;
 public class Utils {
 
 	public static int readInt(byte[] b, int offset) {
-		return 
-			((b[offset++] & 0xff) << 24) +
-			((b[offset++] & 0xff) << 16) +
-			((b[offset++] & 0xff) <<  8) +
-			((b[offset++] & 0xff) <<  0) ;
+		return ((b[offset++] & 0xff) << 24) + ((b[offset++] & 0xff) << 16)
+				+ ((b[offset++] & 0xff) << 8) + ((b[offset++] & 0xff) << 0);
 	}
 
 	public static int readInt(byte[] b) {
-		return 
-			(b[0] & 0xff) << 24 |
-			(b[1] & 0xff) << 16 |
-			(b[2] & 0xff) <<  8 |
-			(b[3] & 0xff) <<  0;
+		return (b[0] & 0xff) << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8
+				| (b[3] & 0xff) << 0;
 	}
 
 	public static long readLong(byte[] b) {
@@ -29,7 +23,7 @@ public class Utils {
 		int low = readInt(b, offset + 4);
 		return (((long) high) << 32) | low;
 	}
-  
+
 	public static void writeInt(byte[] b, int c) {
 		b[0] = (byte) (c >>> 24);
 		b[1] = (byte) (c >>> 16);

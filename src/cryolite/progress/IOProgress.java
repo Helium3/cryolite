@@ -9,7 +9,7 @@ public class IOProgress extends Progress {
 	private static Map<String, IOProgress> ioProgressMap = new HashMap<String, IOProgress>();
 
 	private AtomicInteger refCount = new AtomicInteger(1);
-	
+
 	/**
 	 * Factory to get an IOProgress
 	 * 
@@ -26,7 +26,7 @@ public class IOProgress extends Progress {
 		}
 		return p;
 	}
-	
+
 	/**
 	 * Initial a I/O progress monitor with default delay 5s
 	 * 
@@ -49,11 +49,11 @@ public class IOProgress extends Progress {
 		super(name, delay);
 	}
 
-	public synchronized void close() {		
-		if(refCount.decrementAndGet() != 0) {
+	public synchronized void close() {
+		if (refCount.decrementAndGet() != 0) {
 			return;
 		}
-		
+
 		ioProgressMap.remove(name);
 		super.close();
 		long now = System.currentTimeMillis();

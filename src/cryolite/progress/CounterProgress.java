@@ -6,6 +6,7 @@ public class CounterProgress extends Progress {
 
 	private static HashMap<String, CounterProgress> counterProgressMap = new HashMap<String, CounterProgress>();
 	private int refCount = 1;
+
 	/**
 	 * Factory to get an CounterProgress
 	 * 
@@ -38,13 +39,13 @@ public class CounterProgress extends Progress {
 		return String.format("%s: Total %d processed, avg: %d/s", name,
 				sum.get(), 1000 * sum.get() / (now - start + 1));
 	}
-	
-	public synchronized void close() {		
-		if(--refCount != 0) {
+
+	public synchronized void close() {
+		if (--refCount != 0) {
 			return;
 		}
 		counterProgressMap.remove(name);
-		
+
 		super.close();
 		progress();
 	}

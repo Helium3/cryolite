@@ -3,7 +3,6 @@ package cryolite.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * A thread that can be stopped
  * 
@@ -21,7 +20,7 @@ public abstract class Stoppable implements Runnable {
 	 * only the first takes effect
 	 */
 	public void cancel() {
-      stop = true;
+		stop = true;
 	}
 
 	public void run() {

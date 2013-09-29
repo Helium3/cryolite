@@ -22,8 +22,10 @@ public abstract class Progress {
 		this.last = this.start = System.currentTimeMillis();
 		Monitor._.addEvent(this);
 	}
-	
-	public int getDelay() { return delay*factor; }
+
+	public int getDelay() {
+		return delay * factor;
+	}
 
 	/**
 	 * Set a progress
@@ -32,40 +34,43 @@ public abstract class Progress {
 	 *            the progress to be accumulated
 	 */
 	public void setProgress(long progress) {
-		this.sum.getAndAdd(progress);
-		this.acc.getAndAdd(progress);
+		sum.getAndAdd(progress);
+		acc.getAndAdd(progress);
 	}
 
 	/**
 	 * wait a certain delay before output progress
+	 * 
 	 * @param delay
 	 */
 	protected void waitDelay(long delay) {
 		try {
 			synchronized (this) {
-				if(stop) return;
+				if (stop)
+					return;
 				wait(delay);
 			}
 		} catch (InterruptedException e) {
 			LOG.debug("Interrupted");
 		}
 	}
-	
+
 	protected void slowDown() {
-		if(factor < 300000)
+		if (factor < 300000)
 			factor <<= 1;
 	}
 
 	protected void speedUp() {
 		factor >>>= 1;
-		if(factor == 0) factor = 1;
+		if (factor == 0)
+			factor = 1;
 	}
 
 	/**
 	 * Sub-class should specify how to output the progress
 	 */
 	public void progress() {
-		if(acc.get() == 0) {
+		if (acc.get() == 0) {
 			slowDown();
 		} else {
 			speedUp();
@@ -76,7 +81,7 @@ public abstract class Progress {
 	}
 
 	protected abstract String format();
-	
+
 	/**
 	 * No output except the one in sub-class close will show up
 	 */
